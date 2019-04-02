@@ -9,13 +9,19 @@ var client = mqtt.connect('mqtt://192.168.0.40');
 module.exports = NodeHelper.create({
 
     start: function () {
+        var that = this; // ugly
         this.connector = undefined;
-
-    },
-
-    mqttReceived: function(topic, message) {
-        // message is Buffer
-        this.retrieveCurrentSong(message);
+        client.on('connect', function () {
+            client.subscribe('music/state', function (err) {
+                if (!err) {
+                    //Log.info('Subscribed to MQTT topic');
+                }
+            })
+        });
+        client.on('message', function (topic, message) {
+            // message is Buffer
+            that.retrieveCurrentSong(message);
+        });
     },
 
 
@@ -81,12 +87,3 @@ module.exports = NodeHelper.create({
         return filtered[0].url;
     }
 });
-
-client.on('connect', function () {
-    client.subscribe('music/state', function (err) {
-        if (!err) {
-            //Log.info('Subscribed to MQTT topic');
-        }
-    })
-});
-client.on('message', module.exports.mqttReceived);
