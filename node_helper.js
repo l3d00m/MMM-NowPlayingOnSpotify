@@ -13,13 +13,13 @@ module.exports = NodeHelper.create({
         client.on('connect', function () {
             client.subscribe('music/state', function (err) {
                 if (!err) {
-                    Log.info('Subscribed to MQTT topic');
+                    //Log.info('Subscribed to MQTT topic');
                 }
             })
         });
         client.on('message', function (topic, message) {
             // message is Buffer
-            this.sendSocketNotification('UPDATE_CURRENT_SONG', message);
+            this.retrieveCurrentSong(message);
         });
     },
 
@@ -29,10 +29,6 @@ module.exports = NodeHelper.create({
             case 'CONNECT_TO_SPOTIFY':
                 this.connector = new SpotifyConnector(payload);
                 //this.retrieveCurrentSong();
-                break;
-
-            case 'UPDATE_CURRENT_SONG':
-                this.retrieveCurrentSong(payload);
                 break;
         }
     },
