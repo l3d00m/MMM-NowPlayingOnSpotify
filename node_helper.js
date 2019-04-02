@@ -20,7 +20,7 @@ module.exports = NodeHelper.create({
         });
         client.on('message', function (topic, message) {
             // message is Buffer
-            that.retrieveCurrentSong(message);
+            that.retrieveCurrentSong(message.toString());
         });
     },
 
