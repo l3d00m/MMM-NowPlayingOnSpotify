@@ -3,25 +3,24 @@
 const NodeHelper = require('node_helper');
 const SpotifyConnector = require('./core/SpotifyConnector');
 const mqtt = require('mqtt');
-var client = mqtt.connect('192.168.0.40');
-
-client.on('connect', function () {
-    client.subscribe('music/state', function (err) {
-        if (!err) {
-            Log.info('Subscribed to MQTT topic');
-        }
-    })
-});
-client.on('message', function (topic, message) {
-    // message is Buffer
-    this.sendSocketNotification('UPDATE_CURRENT_SONG', message);
-});
+var client = mqtt.connect('mqtt://192.168.0.40');
 
 
 module.exports = NodeHelper.create({
 
     start: function () {
         this.connector = undefined;
+        client.on('connect', function () {
+            client.subscribe('music/state', function (err) {
+                if (!err) {
+                    Log.info('Subscribed to MQTT topic');
+                }
+            })
+        });
+        client.on('message', function (topic, message) {
+            // message is Buffer
+            this.sendSocketNotification('UPDATE_CURRENT_SONG', message);
+        });
     },
 
 
